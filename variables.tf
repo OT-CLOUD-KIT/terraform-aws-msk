@@ -1,3 +1,9 @@
+variable "kms_key" {
+  type        = string
+  description = "kms keys available"
+  default     = ""
+}
+
 variable "state" {
   type        = string
   description = "state of aws availability zones"
@@ -60,18 +66,20 @@ variable "kafka_encryption_in_transit" {
   type        = string
   description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT."
   default     = "TLS_PLAINTEXT"
+  validation {
+    condition     = contains(["TLS", "TLS_PLAINTEXT", "PLAINTEXT"], var.tcp_protocol)
+    error_message = "Valid values are \"TLS\",\"TLS_PLAINTEXT\",\"PLAINTEXT\"."
+  }
 }
 
 variable "kafka_monitoring_level" {
   type        = string
   description = "property to one of three monitoring levels: DEFAULT, PER_BROKER, or PER_TOPIC_PER_BROKER"
   default     = "PER_TOPIC_PER_BROKER"
-}
-
-variable "kms_key" {
-  type        = string
-  description = "kms keys available"
-  default     = ""
+  validation {
+    condition     = contains(["DEFAULT", "PER_BROKER", "PER_TOPIC_PER_BROKER"], var.tcp_protocol)
+    error_message = "Valid values are \"DEFAULT\",\"PER_BROKER\",\"PER_TOPIC_PER_BROKER\"."
+  }
 }
 
 variable "tags" {

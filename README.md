@@ -55,7 +55,7 @@ module "kafka" {
 |------|-------------|:----:|:-----:|:-----:|
 | aws_vpc_enable_resource |if value is true then resource block will be used and if false then data block will be used| `bool` | `true` | yes |
 | kms_key | kms keys available value in the form of a string | `string`  | `""` | no |
-| state | availability zone state |  | `"available"` | yes |
+| state | availability zone state | `string` | `"available"` | yes |
 | security_group_id  | security group ids in the form of a list of string | `list(string)` | `[]` | yes |
 | subnet_ids  | subnet ids in the form of a list of string| `list(string)` | `[]` | yes 
 | name_prefix | A prefix used for naming resources (msk cluster) in the form of a string  | `string` | `"example"` | yes |

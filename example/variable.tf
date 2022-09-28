@@ -3,6 +3,11 @@ variable "aws_vpc_enable_resource" {
   description = "aws vpc enable resource"
 }
 
+variable "kms_key" {
+  type        = string
+  description = "kms keys available"
+}
+
 variable "state" {
   type        = string
   description = "state of aws availability zones"
@@ -116,11 +121,6 @@ variable "kafka_custom_config_unclean_leader_election_enable" {
 variable "kafka_custom_config_offsets_topic_replication_factor" {
   type        = number
   description = "kafka custom config offsets topic replication factor"
-}
-
-variable "kms_key" {
-  type        = string
-  description = "kms keys available"
 }
 
 variable "tags" {
