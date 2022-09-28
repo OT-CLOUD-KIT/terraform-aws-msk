@@ -1,18 +1,21 @@
+variable "aws_vpc_enable_resource" {
+  type        = bool
+  description = "aws vpc enable resource"
+}
+
 variable "state" {
   type        = string
   description = "state of aws availability zones"
 }
 
-variable "kafka_tag_key" {
-  type        = string
-  description = "tag key for kafka resource"
-  default     = "vpc"
+variable "security_group_id" {
+  type        = list(string)
+  description = "value of security group id"
 }
 
-variable "kafka_tag_value" {
-  type        = string
-  description = "kafka tag values for getting already created aws resources"
-  default     = "shri"
+variable "subnet_ids" {
+  type        = list(string)
+  description = "value of subnet ids"
 }
 
 variable "name_prefix" {
@@ -20,14 +23,14 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID"
+variable "kafka_versions" {
+  type        = list(string)
+  description = "Version of Kafka aws msk configuration"
 }
 
 variable "kafka_version" {
   type        = string
-  description = "Version of Kafka"
+  description = "Version of Kafka brokers"
 }
 
 variable "kafka_broker_number" {
@@ -113,6 +116,11 @@ variable "kafka_custom_config_unclean_leader_election_enable" {
 variable "kafka_custom_config_offsets_topic_replication_factor" {
   type        = number
   description = "kafka custom config offsets topic replication factor"
+}
+
+variable "kms_key" {
+  type        = string
+  description = "kms keys available"
 }
 
 variable "tags" {

@@ -4,16 +4,14 @@ variable "state" {
   default     = "available"
 }
 
-variable "kafka_tag_key" {
-  type        = string
-  description = "tag key for kafka resource"
-  default     = "vpc"
+variable "security_group_id" {
+  type        = list(string)
+  description = "value of security group id"
 }
 
-variable "kafka_tag_value" {
-  type        = string
-  description = "kafka tag values for getting already created aws resources"
-  default     = "devops"
+variable "subnet_ids" {
+  type        = list(string)
+  description = "value of subnet ids"
 }
 
 variable "kafka_custom_config" {
@@ -28,9 +26,10 @@ variable "name_prefix" {
   default     = "example"
 }
 
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID"
+variable "kafka_versions" {
+  type        = list(string)
+  description = "Version of Kafka aws msk configuration"
+  default     = ["3.2.0"]
 }
 
 variable "kafka_version" {
@@ -67,6 +66,12 @@ variable "kafka_monitoring_level" {
   type        = string
   description = "property to one of three monitoring levels: DEFAULT, PER_BROKER, or PER_TOPIC_PER_BROKER"
   default     = "PER_TOPIC_PER_BROKER"
+}
+
+variable "kms_key" {
+  type        = string
+  description = "kms keys available"
+  default     = ""
 }
 
 variable "tags" {

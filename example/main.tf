@@ -17,11 +17,14 @@ data "template_file" "msk-custom-configuration" {
 
 module "kafka" {
   source                      = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-msk.git"
+  count                       = var.aws_vpc_enable_resource == true ? 1 : 0
+  kms_key                     = var.kms_key
+  state                       = var.state
+  security_group_id           = var.security_group_id 
+  subnet_ids                  = var.subnet_ids        
   name_prefix                 = var.name_prefix
-  vpc_id                      = var.vpc_id
-  kafka_tag_value             = var.kafka_tag_value
-  kafka_tag_key               = var.kafka_tag_key
   kafka_version               = var.kafka_version
+  kafka_versions              = var.kafka_versions
   kafka_broker_number         = var.kafka_broker_number
   kafka_instance_type         = var.kafka_instance_type
   kafka_ebs_volume_size       = var.kafka_ebs_volume_size
@@ -30,3 +33,5 @@ module "kafka" {
   kafka_custom_config         = data.template_file.msk-custom-configuration.rendered
   tags                        = var.tags
 }
+
+  

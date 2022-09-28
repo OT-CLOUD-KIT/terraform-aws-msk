@@ -1,9 +1,11 @@
+aws_vpc_enable_resource                              = true
+kms_key                                              = ""
 state                                                = "available"
-kafka_tag_key                                        = "vpc"
-kafka_tag_value                                      = "devops"
-name_prefix                                          = "example1"
-#vpc_id                                              = ""
+# security_group_id                                    = []
+# subnet_ids                                           = []
+name_prefix                                          = "example"
 kafka_version                                        = "3.2.0"
+kafka_versions                                       = ["3.2.0"]
 kafka_broker_number                                  = 3
 kafka_instance_type                                  = "kafka.m5.large"
 kafka_ebs_volume_size                                = "100"
@@ -26,3 +28,4 @@ tags = {
   environment : "dev"
   team : "devops"
 }
+
