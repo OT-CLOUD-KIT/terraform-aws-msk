@@ -67,7 +67,7 @@ variable "kafka_encryption_in_transit" {
   description = "Encryption setting for data in transit between clients and brokers. Valid values: TLS, TLS_PLAINTEXT, and PLAINTEXT."
   default     = "TLS_PLAINTEXT"
   validation {
-    condition     = contains(["TLS", "TLS_PLAINTEXT", "PLAINTEXT"], var.tcp_protocol)
+    condition     = contains(["TLS", "TLS_PLAINTEXT", "PLAINTEXT"], var.kafka_encryption_in_transit)
     error_message = "Valid values are \"TLS\",\"TLS_PLAINTEXT\",\"PLAINTEXT\"."
   }
 }
@@ -77,7 +77,7 @@ variable "kafka_monitoring_level" {
   description = "property to one of three monitoring levels: DEFAULT, PER_BROKER, or PER_TOPIC_PER_BROKER"
   default     = "PER_TOPIC_PER_BROKER"
   validation {
-    condition     = contains(["DEFAULT", "PER_BROKER", "PER_TOPIC_PER_BROKER"], var.tcp_protocol)
+    condition     = contains(["DEFAULT", "PER_BROKER", "PER_TOPIC_PER_BROKER"], var.kafka_monitoring_level)
     error_message = "Valid values are \"DEFAULT\",\"PER_BROKER\",\"PER_TOPIC_PER_BROKER\"."
   }
 }

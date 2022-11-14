@@ -1,12 +1,12 @@
 aws_vpc_enable_resource                              = true
 kms_key                                              = ""
 state                                                = "available"
-# security_group_id                                    = []
-# subnet_ids                                           = []
+#security_group_id                                    = []
+#subnet_ids                                           = []
 name_prefix                                          = "example"
 kafka_version                                        = "3.2.0"
 kafka_versions                                       = ["3.2.0"]
-kafka_broker_number                                  = 3
+kafka_broker_number                                  = 2
 kafka_instance_type                                  = "kafka.m5.large"
 kafka_ebs_volume_size                                = "100"
 kafka_encryption_in_transit                          = "TLS_PLAINTEXT"
