@@ -33,3 +33,14 @@ jobs:
       - uses: opstree/central-github-actions/terraform/validate-structure@main
         with:
           directory: "./"
+
+  tfsec:
+    name: Terraform security
+    needs: [structure-validate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opstree/central-github-actions/terraform/security@main
+        with:
+          directory: "./"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
