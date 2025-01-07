@@ -1,0 +1,46 @@
+---
+name: TF CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.tf"
+      - "**.tfvars"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tflint:
+    name: Terraform lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opstree/central-github-actions/terraform/linters@main
+        with:
+          terraform_version: "1.10.2"
+          directory: "./"
+
+  structure-validate:
+    name: Validating structure
+    needs: [tflint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opstree/central-github-actions/terraform/validate-structure@main
+        with:
+          directory: "./"
+
+  tfsec:
+    name: Terraform security
+    needs: [structure-validate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opstree/central-github-actions/terraform/security@main
+        with:
+          directory: "./"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
