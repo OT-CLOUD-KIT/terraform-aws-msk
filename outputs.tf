@@ -32,3 +32,8 @@ output "zookeeper_connect_string_tls" {
   description = "A comma separated list of one or more hostname:port pairs to use to connect to the Apache Zookeeper cluster via TLS. "
   value       = aws_msk_cluster.msk.zookeeper_connect_string_tls
 }
+
+output "kms_key_arn" {
+  description = "ARN for the KMS key created for encryption and decryption"
+  value       = aws_kms_key.kms[*].arn
+}
