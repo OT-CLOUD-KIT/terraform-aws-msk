@@ -77,3 +77,75 @@ variable "broker_volume_size" {
   type        = number
   default     = 100
 }
+
+variable "client_broker_protocol" {
+  description = "Encryption setting for data in transit between clients and brokers."
+  type        = string
+  default     = "TLS_PLAINTEXT"
+}
+
+variable "encryption_in_cluster_enabled" {
+  description = "Whether data communication among broker nodes is encrypted"
+  type        = bool
+  default     = true
+}
+
+variable "create_kms_key" {
+  description = "Whether to create KMS key for encryption"
+  type        = bool
+  default     = false
+}
+
+variable "encryption_at_rest_kms_key_arn" {
+  description = "You may specify a KMS key short ID or ARN"
+  type        = string
+  default     = ""
+}
+
+variable "enable_open_monitoring" {
+  description = "Set `true` to enable the open monitoring with node and jmx exporter"
+  type        = bool
+  default     = true
+}
+
+variable "cloudwatch_logs_enabled" {
+  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs"
+  type        = bool
+  default     = false
+}
+
+variable "cloudwatch_logs_log_group" {
+  description = "Name of the Cloudwatch Log Group to deliver logs to"
+  type        = string
+  default     = ""
+}
+
+variable "firehose_logs_enabled" {
+  description = "Indicates whether you want to enable or disable streaming broker logs to Kinesis Data Firehose"
+  type        = bool
+  default     = false
+}
+
+variable "firehose_delivery_stream" {
+  description = "Name of the Kinesis Data Firehose delivery stream to deliver logs to"
+  type        = string
+  default     = ""
+}
+
+variable "s3_logs_enabled" {
+  description = " Indicates whether you want to enable or disable streaming broker logs to S3"
+  type        = bool
+  default     = false
+}
+
+variable "s3_logs_bucket" {
+  description = "Name of the S3 bucket to deliver logs to"
+  type        = string
+  default     = ""
+}
+
+variable "s3_logs_prefix" {
+  description = "Prefix to append to the S3 folder name logs are delivered to"
+  type        = string
+  default     = ""
+}

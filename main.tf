@@ -33,6 +33,15 @@ resource "aws_msk_configuration" "msk_config" {
   }
 }
 
+# KMS key creation for data encryption
+resource "aws_kms_key" "kms" {
+  count                    = var.create_kms_key ? 1 : 0
+  description              = "KMS key to encrypt and decrypt MSK data"
+  key_usage                = "ENCRYPT_DECRYPT"
+  customer_master_key_spec = "SYMMETRIC_DEFAULT"
+  is_enabled               = true
+}
+
 # MSK cluster creation and management code
 resource "aws_msk_cluster" "msk" {
   cluster_name           = format("%s-cluster", var.name)
@@ -62,4 +71,49 @@ resource "aws_msk_cluster" "msk" {
     arn      = aws_msk_configuration.msk_config.arn
     revision = aws_msk_configuration.msk_config.latest_revision
   }
+
+  encryption_info {
+    encryption_in_transit {
+      client_broker = var.client_broker_protocol
+      in_cluster    = var.encryption_in_cluster_enabled
+    }
+
+    encryption_at_rest_kms_key_arn = var.create_kms_key ? aws_kms_key.kms[0].arn : var.encryption_at_rest_kms_key_arn
+  }
+
+  open_monitoring {
+    prometheus {
+      jmx_exporter {
+        enabled_in_broker = var.enable_open_monitoring
+      }
+      node_exporter {
+        enabled_in_broker = var.enable_open_monitoring
+      }
+    }
+  }
+
+  logging_info {
+    broker_logs {
+      cloudwatch_logs {
+        enabled   = var.cloudwatch_logs_enabled
+        log_group = var.cloudwatch_logs_log_group
+      }
+
+      firehose {
+        enabled         = var.firehose_logs_enabled
+        delivery_stream = var.firehose_delivery_stream
+      }
+
+      s3 {
+        enabled = var.s3_logs_enabled
+        bucket  = var.s3_logs_bucket
+        prefix  = var.s3_logs_prefix
+      }
+    }
+  }
+
+  tags = merge(
+    { "Name" = format("%s-cluster", var.name) },
+    var.tags
+  )
 }
