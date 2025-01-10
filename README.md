@@ -1,10 +1,47 @@
 ## Terraform AWS MSK
 
-A terraform module which creates AWS Managed Kafka Service (MSK) with best practices in terms of network security, cost and optimization.
+A terraform module which creates AWS Managed Kafka Service (MSK) with best practices in terms of network security, cost and optimization. Here are the list of features in this MSK terraform:-
+
+- MSK cluster setup with security group controls.
+- KMS encryption support for cluster.
+- Monitoring support with JMX and node exporter.
+- Logging support for Cloudwatch, Firebase and S3.
+- Client authentication support with AWS secret manager.
+- Kafka MSK scaling with AWS app autoscaling.
+
+## Usage
+
+```hcl
+module "msk" {
+  source  = "OT-CLOUD-KIT/msk/aws"
+  # Always point to the latest stable version
+  version = "1.0.0"
+  vpc_id = "vpc-xxxxxx"
+
+  create_sec_grp = true
+
+  ingress_rules = {
+    "plaintext" = {
+      port = "9092"
+      cidr_blocks = [
+        "10.0.0.0/8"
+      ]
+    }
+  }
+
+  server_properties = {
+    "log.retention.hours" = 300
+    "num.partitions"      = 1
+  }
+
+  subnet_ids     = ["subnet-yyyyyy", "subnet-xxxxxx"]
+  create_kms_key = true
+}
+```
 
 ## Architecture
 
-![](./assets/msk-architecture.gif)
+![](https://raw.githubusercontent.com/OT-CLOUD-KIT/terraform-aws-msk/refs/heads/main/assets/msk-architecture.gif)
 
 ## Providers
 

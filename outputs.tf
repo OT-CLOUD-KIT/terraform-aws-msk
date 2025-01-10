@@ -34,6 +34,16 @@ output "zookeeper_connect_string_tls" {
 }
 
 output "kms_key_arn" {
-  description = "ARN for the KMS key created for encryption and decryption"
+  description = "ARN for the KMS key created for encryption and decryption."
   value       = aws_kms_key.kms[*].arn
+}
+
+output "msk_scaling_target_arn" {
+  description = "ARN for MSK app target scaling."
+  value       = aws_appautoscaling_target.msk_target[*].arn
+}
+
+output "msk_scaling_target_policy_arn" {
+  description = "ARN for MSK app target policy scaling."
+  value       = aws_appautoscaling_policy.msk_policy[*].arn
 }
