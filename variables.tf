@@ -85,67 +85,103 @@ variable "client_broker_protocol" {
 }
 
 variable "encryption_in_cluster_enabled" {
-  description = "Whether data communication among broker nodes is encrypted"
+  description = "Whether data communication among broker nodes is encrypted."
   type        = bool
   default     = true
 }
 
 variable "create_kms_key" {
-  description = "Whether to create KMS key for encryption"
+  description = "Whether to create KMS key for encryption."
   type        = bool
   default     = false
 }
 
 variable "encryption_at_rest_kms_key_arn" {
-  description = "You may specify a KMS key short ID or ARN"
+  description = "You may specify a KMS key short ID or ARN."
   type        = string
   default     = ""
 }
 
 variable "enable_open_monitoring" {
-  description = "Set `true` to enable the open monitoring with node and jmx exporter"
+  description = "Set `true` to enable the open monitoring with node and jmx exporter."
   type        = bool
   default     = true
 }
 
 variable "cloudwatch_logs_enabled" {
-  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs"
+  description = "Indicates whether you want to enable or disable streaming broker logs to Cloudwatch Logs."
   type        = bool
   default     = false
 }
 
 variable "cloudwatch_logs_log_group" {
-  description = "Name of the Cloudwatch Log Group to deliver logs to"
+  description = "Name of the Cloudwatch Log Group to deliver logs to."
   type        = string
   default     = ""
 }
 
 variable "firehose_logs_enabled" {
-  description = "Indicates whether you want to enable or disable streaming broker logs to Kinesis Data Firehose"
+  description = "Indicates whether you want to enable or disable streaming broker logs to Kinesis Data Firehose."
   type        = bool
   default     = false
 }
 
 variable "firehose_delivery_stream" {
-  description = "Name of the Kinesis Data Firehose delivery stream to deliver logs to"
+  description = "Name of the Kinesis Data Firehose delivery stream to deliver logs to."
   type        = string
   default     = ""
 }
 
 variable "s3_logs_enabled" {
-  description = " Indicates whether you want to enable or disable streaming broker logs to S3"
+  description = " Indicates whether you want to enable or disable streaming broker logs to S3."
   type        = bool
   default     = false
 }
 
 variable "s3_logs_bucket" {
-  description = "Name of the S3 bucket to deliver logs to"
+  description = "Name of the S3 bucket to deliver logs to."
   type        = string
   default     = ""
 }
 
 variable "s3_logs_prefix" {
-  description = "Prefix to append to the S3 folder name logs are delivered to"
+  description = "Prefix to append to the S3 folder name logs are delivered to."
   type        = string
   default     = ""
+}
+
+variable "autoscaling_enabled" {
+  description = "To automatically expand your cluster's storage in response to increased usage, you can enable this."
+  type        = bool
+  default     = true
+}
+
+variable "max_volume_size" {
+  description = "Maximum volume size on which MSK can be scaled."
+  type        = number
+  default     = 1000
+}
+
+variable "scaling_target_threshold" {
+  description = "Percentage of storage used to trigger autoscaled storage increase."
+  type        = number
+  default     = 60
+}
+
+variable "storage_autoscaling_disable_scale_in" {
+  description = "If the value is true, scale in is disabled."
+  type        = bool
+  default     = false
+}
+
+variable "client_sasl_scram_enabled" {
+  description = "Enable SCRAM client authentication via AWS Secrets Manager."
+  type        = bool
+  default     = false
+}
+
+variable "aws_secret_manager_arn" {
+  description = "List of AWS secret manager secrets in which username and password is present."
+  type        = list(string)
+  default     = []
 }

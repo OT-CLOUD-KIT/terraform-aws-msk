@@ -112,8 +112,47 @@ resource "aws_msk_cluster" "msk" {
     }
   }
 
+  client_authentication {
+    sasl {
+      scram = var.client_sasl_scram_enabled
+    }
+  }
   tags = merge(
     { "Name" = format("%s-cluster", var.name) },
     var.tags
   )
+}
+
+## Secret Manager integration for authentication
+resource "aws_msk_scram_secret_association" "scram_association" {
+  count           = var.client_sasl_scram_enabled ? 1 : 0
+  cluster_arn     = aws_msk_cluster.msk.arn
+  secret_arn_list = var.aws_secret_manager_arn
+}
+
+## Autoscaling of MSK storage service
+resource "aws_appautoscaling_target" "msk_target" {
+  count              = var.autoscaling_enabled ? 1 : 0
+  max_capacity       = var.max_volume_size
+  min_capacity       = 1
+  resource_id        = aws_msk_cluster.msk.arn
+  scalable_dimension = "kafka:broker-storage:VolumeSize"
+  service_namespace  = "kafka"
+}
+
+resource "aws_appautoscaling_policy" "msk_policy" {
+  count              = var.autoscaling_enabled ? 1 : 0
+  name               = format("%s-broker-scaling", aws_msk_cluster.msk.cluster_name)
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_msk_cluster.msk.arn
+  scalable_dimension = one(aws_appautoscaling_target.msk_target[*].scalable_dimension)
+  service_namespace  = one(aws_appautoscaling_target.msk_target[*].service_namespace)
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "KafkaBrokerStorageUtilization"
+    }
+
+    target_value = var.scaling_target_threshold
+  }
 }
