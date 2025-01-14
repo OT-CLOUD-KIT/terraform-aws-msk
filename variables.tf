@@ -28,6 +28,7 @@ variable "ingress_rules" {
     security_group_ids = optional(list(string))
     cidr_blocks        = optional(list(string))
   }))
+  default = {}
 }
 
 variable "kafka_version" {
@@ -153,7 +154,7 @@ variable "s3_logs_prefix" {
 variable "autoscaling_enabled" {
   description = "To automatically expand your cluster's storage in response to increased usage, you can enable this."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "max_volume_size" {
