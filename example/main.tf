@@ -1,23 +1,3 @@
-module "standard_tags" {
-  source = "git@github.com:OT-CLOUD-KIT/terraform-aws-standard-tagging.git?ref=dev"
-
-  bu      = var.bu
-  program = var.program
-  app     = var.app
-  team    = var.team
-  region  = var.region
-  env     = var.env
-}
-
-module "naming" {
-  source   = "git@github.com:OT-CLOUD-KIT/terraform-aws-naming.git?ref=dev"
-  bu       = var.bu
-  env      = var.env
-  app      = var.app
-  resource = var.resource
-}
-
-
 
 module "msk" {
   source = "git@github.com:OT-CLOUD-KIT/terraform-aws-msk.git?ref=Feature" 
@@ -34,13 +14,10 @@ module "msk" {
   create_kms_key                  = var.create_kms_key
   encryption_in_cluster_enabled   = var.encryption_in_cluster_enabled
   client_broker_protocol          = var.client_broker_protocol
+  env =var.env
+  owner = var.owner
+  app = var.app
   
-  bu      = var.bu
-  program = var.program
-  app     = var.app
-  env     = var.env
-  team    = var.team
-  region  = var.region
   server_properties               = var.server_properties
 
   enhanced_monitoring             = var.enhanced_monitoring
