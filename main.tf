@@ -3,10 +3,11 @@ resource "aws_security_group" "msk_sec_grp" {
   count       = var.create_sec_grp ? 1 : 0
   vpc_id      = var.vpc_id
   description = "Security group for managing MSK connectivity rules"
-  name        = format("%s-sec-grp", var.name)
+  name        = format("%s-sec-grp", local.base_name)
   tags = merge(
-    { "Name" = format("%s-sec-grp", var.name) },
-    var.tags
+    { "Name" = format("%s-sec-grp", local.base_name) },
+        local.common_tags
+
   )
 
   dynamic "ingress" {
@@ -19,11 +20,24 @@ resource "aws_security_group" "msk_sec_grp" {
       cidr_blocks     = ingress.value.cidr_blocks
     }
   }
+
+dynamic "egress" {
+  for_each = var.egress_rules
+  content {
+    from_port       = egress.value.port
+    to_port         = egress.value.port
+    protocol        = egress.value.protocol
+    security_groups = egress.value.security_group_ids
+    cidr_blocks     = egress.value.cidr_blocks
+  }
+}
+
+
 }
 
 # MSK cluster configuration creation code
 resource "aws_msk_configuration" "msk_config" {
-  name              = format("%s-config", var.name)
+  name              = format("%s-config", local.base_name)
   server_properties = join("\n", [for prop_key in keys(var.server_properties) : format("%s = %s", prop_key, var.server_properties[prop_key])])
   description       = "Configuration for MSK"
   kafka_versions    = [var.kafka_version]
@@ -40,11 +54,17 @@ resource "aws_kms_key" "kms" {
   key_usage                = "ENCRYPT_DECRYPT"
   customer_master_key_spec = "SYMMETRIC_DEFAULT"
   is_enabled               = true
+  tags = merge(
+    { Name = format("%s-msk-kms-key", local.base_name) },
+    local.common_tags
+  )
 }
 
-# MSK cluster creation and management code
+#-------------------------
+# MSK Cluster
+#-------------------------
 resource "aws_msk_cluster" "msk" {
-  cluster_name           = format("%s-cluster", var.name)
+  cluster_name           = format("%s-msk-cluster", local.base_name)
   kafka_version          = var.kafka_version
   number_of_broker_nodes = var.brokers_count
   enhanced_monitoring    = var.enhanced_monitoring
@@ -96,7 +116,7 @@ resource "aws_msk_cluster" "msk" {
     broker_logs {
       cloudwatch_logs {
         enabled   = var.cloudwatch_logs_enabled
-        log_group = var.cloudwatch_logs_log_group
+        log_group = var.cloudwatch_logs_enabled ? var.cloudwatch_logs_log_group : null
       }
 
       firehose {
@@ -115,13 +135,22 @@ resource "aws_msk_cluster" "msk" {
   client_authentication {
     sasl {
       scram = var.client_sasl_scram_enabled
+      iam   = var.client_sasl_iam_enabled
     }
+
+    tls {
+      certificate_authority_arns = var.client_tls_enabled ? var.acm_certificate_arns : null
+    }
+
+    unauthenticated = var.client_unauthenticated_enabled
   }
+
   tags = merge(
-    { "Name" = format("%s-cluster", var.name) },
-    var.tags
+    { Name = format("%s-msk-cluster", local.base_name) },
+    local.common_tags
   )
 }
+
 
 ## Secret Manager integration for authentication
 resource "aws_msk_scram_secret_association" "scram_association" {
@@ -130,7 +159,9 @@ resource "aws_msk_scram_secret_association" "scram_association" {
   secret_arn_list = var.aws_secret_manager_arn
 }
 
-## Autoscaling of MSK storage service
+#-------------------------
+# MSK Auto Scaling Target
+#-------------------------
 resource "aws_appautoscaling_target" "msk_target" {
   count              = var.autoscaling_enabled ? 1 : 0
   max_capacity       = var.max_volume_size
@@ -140,9 +171,12 @@ resource "aws_appautoscaling_target" "msk_target" {
   service_namespace  = "kafka"
 }
 
+#-------------------------
+# MSK Auto Scaling Policy
+#-------------------------
 resource "aws_appautoscaling_policy" "msk_policy" {
   count              = var.autoscaling_enabled ? 1 : 0
-  name               = format("%s-broker-scaling", aws_msk_cluster.msk.cluster_name)
+  name               = format("%s-msk-broker-scaling", local.base_name)
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_msk_cluster.msk.arn
   scalable_dimension = one(aws_appautoscaling_target.msk_target[*].scalable_dimension)

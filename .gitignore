@@ -1,6 +1,0 @@
-.terraform
-*.tfstate*
-*provider.tf
-*plan.out
-*.tfvars
-.terraform.lock.hcl
